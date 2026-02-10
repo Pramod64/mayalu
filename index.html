@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>For Mayalu 💗</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+/* -------- BASIC SETUP -------- */
+:root{
+  --pink:#ff4d88;
+  --red:#ff2e63;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Quicksand',system-ui,sans-serif;
+  min-height:100vh;
+  overflow:hidden;
+  background:linear-gradient(160deg,#fff0f5,#ffd6e7 40%,#ffeef2 70%,#fff);
+  color:#5a2a3a;
+}
+
+/* Layout */
+.main{
+  padding:calc(20px + env(safe-area-inset-top)) 20px calc(30px + env(safe-area-inset-bottom));
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+
+/* Floating background hearts */
+.bg-heart{
+  position:absolute;
+  bottom:-40px;
+  font-size:14px;
+  animation:floatUp linear infinite;
+  opacity:.35;
+}
+@keyframes floatUp{to{transform:translateY(-120vh);opacity:0}}
+
+/* Heading */
+.question{
+  font-family:'Dancing Script',cursive;
+  font-size:clamp(2.3rem,7vw,4rem);
+  margin-bottom:40px;
+}
+
+/* Buttons */
+.buttons{display:flex;gap:20px;flex-wrap:wrap;justify-content:center}
+.btn{
+  min-height:58px;
+  padding:16px 32px;
+  border-radius:999px;
+  font-size:clamp(1.1rem,4vw,1.4rem);
+  font-weight:600;
+  border:none;
+  cursor:pointer;
+}
+#yesBtn{
+  background:linear-gradient(45deg,var(--pink),var(--red));
+  color:white;
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+#noBtn{background:#cfd8e6;color:#34495e}
+
+/* Celebration */
+.celebration{
+  position:fixed;inset:0;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  background:radial-gradient(circle at center,#ffe3ec,#ffd1e3,#fff);
+  overflow:hidden;
+}
+
+/* Music toggle */
+.music-toggle{
+  position:fixed;
+  top:calc(12px + env(safe-area-inset-top));
+  right:16px;
+  padding:10px 14px;
+  border-radius:20px;
+  border:none;
+  background:white;
+  box-shadow:0 5px 15px rgba(0,0,0,.1);
+  font-size:1.1rem;
+  cursor:pointer;
+  display:none;
+}
+
+/* Big heart */
+.big-heart{
+  font-size:110px;
+  animation:beat 1s infinite;
+  margin-bottom:25px;
+}
+@keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+
+/* Floating celebration items */
+.floaty{
+  position:absolute;
+  font-size:24px;
+  animation:drift linear infinite;
+}
+@keyframes drift{to{transform:translateY(110vh) rotate(360deg);opacity:0}}
+
+.message{
+  max-width:520px;
+  font-size:clamp(1rem,4vw,1.3rem);
+  line-height:1.6;
+  white-space:pre-line;
+  opacity:0;
+  transform:translateY(20px);
+  transition:1s;
+}
+
+@media (max-width:440px){.buttons{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<!-- 🎵 Romantic Music (correct URL + user gesture triggered) -->
+<audio id="bgMusic" loop preload="auto">
+  <source src="Abhi.mp3" type="audio/mpeg">
+</audio>
+
+<button class="music-toggle" id="musicToggle">🎵</button>
+
+<div class="main" id="mainScreen">
+  <div class="question">Mayalu, will you be my Valentine? 💗</div>
+  <div class="buttons">
+    <button class="btn" id="yesBtn">YES 💖</button>
+    <button class="btn" id="noBtn">NO</button>
+  </div>
+</div>
+
+<div class="celebration" id="celebration">
+  <div class="big-heart">💞</div>
+  <div class="message" id="finalMsg"></div>
+</div>
+
+<script>
+/* Floating background hearts */
+for(let i=0;i<30;i++){
+  const h=document.createElement('div');
+  h.className='bg-heart';
+  h.textContent='💗';
+  h.style.left=Math.random()*100+'vw';
+  h.style.animationDuration=(6+Math.random()*6)+'s';
+  document.body.appendChild(h);
+}
+
+/* Playful NO button */
+const noBtn=document.getElementById('noBtn');
+let attempts=0;
+const excuses=[
+"Wait... wrong button na Mayalu? 😅",
+"Pramod's heart is begging you not to click me 🥺",
+"This button is on vacation in Maldives sorry",
+"404: NO not found",
+"Mayalu please... don't break my heart yaar 😭"
+];
+
+function dodge(){
+  if(attempts<3){
+    const x=Math.random()*(window.innerWidth-120);
+    const y=Math.random()*(window.innerHeight-80);
+    noBtn.style.position='fixed';
+    noBtn.style.left=x+'px';
+    noBtn.style.top=y+'px';
+  }else if(attempts<5){
+    noBtn.textContent=excuses[attempts-3];
+  }else{
+    noBtn.style.transform='scale(.3)';
+    setTimeout(()=>noBtn.style.display='none',600);
+  }
+  attempts++;
+}
+noBtn.addEventListener('mouseenter',dodge);
+noBtn.addEventListener('touchstart',dodge);
+
+/* YES button — MUSIC PLAYS HERE (user interaction) */
+const yesBtn=document.getElementById('yesBtn');
+const mainScreen=document.getElementById('mainScreen');
+const celebration=document.getElementById('celebration');
+const finalMsg=document.getElementById('finalMsg');
+const music=document.getElementById('bgMusic');
+const musicToggle=document.getElementById('musicToggle');
+
+yesBtn.addEventListener('click', () => {
+  // This click is a user gesture → music allowed
+  music.currentTime = 0;
+  music.play().then(()=>{
+    musicToggle.style.display='block';
+    musicToggle.textContent='🎵';
+  }).catch(()=>{});
+
+  mainScreen.style.display='none';
+  celebration.style.display='flex';
+
+  // floating cute items
+  const emojis=['🌹','🍫','🧸','💋','🤗','✨','💖'];
+  for(let i=0;i<45;i++){
+    const e=document.createElement('div');
+    e.className='floaty';
+    e.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    e.style.left=Math.random()*100+'vw';
+    e.style.animationDuration=(5+Math.random()*6)+'s';
+    celebration.appendChild(e);
+  }
+
+  const text=`YESSSSS!!! 🥹💖💖
+Thank you my Mayalu... Pramod is officially the happiest boy in Canberra right now!
+Get ready for too many good morning texts, surprise chocolates, midnight memes,
+forehead kisses, tight hugs, and all my love forever and ever okay? ♡♡
+I love you!`;
+
+  let i=0;
+  const type=setInterval(()=>{
+    finalMsg.style.opacity=1;
+    finalMsg.style.transform='translateY(0)';
+    finalMsg.textContent+=text[i];
+    i++;
+    if(i>=text.length) clearInterval(type);
+  },30);
+});
+
+/* Music toggle */
+musicToggle.onclick=()=>{
+  if(music.paused){music.play();musicToggle.textContent='🎵'}
+  else{music.pause();musicToggle.textContent='🔇'}
+};
+</script>
+</body>
+</html>
